@@ -1,0 +1,32 @@
+
+.macro setupStack bytes=#0
+    push {fp, lr}
+    mov fp, sp
+    sub sp, \bytes
+.endm
+
+.macro setupStackNoLR bytes=#0
+    push {fp}
+    mov fp, sp
+    sub sp, \bytes
+.endm
+
+.macro releaseStack bytes=#0
+    mov r12, #0
+    zeroloop\@:
+        cmp fp, sp
+        strne r12, [sp], #4
+        bne zeroloop\@
+    pop {fp, lr}
+    add sp, \bytes
+.endm
+
+.macro releaseStackNoLR bytes=#0
+    mov r12, #0
+    zeroloop_NLR\@:
+        cmp fp, sp
+        strne r12, [sp], #4
+        bne zeroloop_NLR\@
+    pop {fp}
+    add sp, \bytes
+.endm
